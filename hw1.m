@@ -12,13 +12,22 @@ k=(2*pi/(2*L))*[0:(n/2-1) -n/2:-1]; ks=fftshift(k);
 [Kx,Ky,Kz]=meshgrid(ks,ks,ks);
 
 % create data cubes 2^6x2^6x2^6
-Uf = zeros(n,n,n);
+Ufave = zeros(n,n,n);
+Un = zeros(20,n,n,n);
+
 for j=1:20
-    Utn(j,:,:,:) = reshape(Undata(j,:),n,n,n);
-    Uf = Uf + fftshift(fftn(Utn(j,:,:,:)));
+    Un(j,:,:,:) = reshape(Undata(j,:),n,n,n);
+    Utn(:,:,:) = Un(j,:,:,:);
+    Ufave = Ufave + abs(fftshift(fftn(Utn(:,:,:))));
 end
 
+% Average spectra
+Ufave = Ufave/20;
+[Ufavemax,index] = max(Ufave,[],'all','linear');
+isosurface(Kx,Ky,Kz,Ufave/Ufavemax,0.8);
+axis([-10 10 -10 10 -10 10]);
 % Uf matches to Kx,Ky,Kz 
+
 
 % average spectrum
 
@@ -36,3 +45,5 @@ end
 % axis([-20 20 -20 20 -20 20]), grid on, drawnow
 % pause(.01)
 % end
+
+
