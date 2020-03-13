@@ -30,7 +30,7 @@ for k=1:numFrames
     g1(:,:,k) = rgb2gray(vidFrames1_1(:,:,:,k));
     g2(:,:,k) = rgb2gray(vidFrames2_1(:,:,:,k));
     g3(:,:,k) = rgb2gray(vidFrames3_1(:,:,:,k));
-% Decision Threshold
+% Intensity decision Threshold
     for j=1:sy
         for i=1:sx
             if(g1(j,i,k) < alpha(1))
@@ -44,23 +44,6 @@ for k=1:numFrames
             end
         end
     end
-
-% Raster elimination
-%     if(k < 200) 
-%         for j=1:sy
-%             for i=1:sx
-%                 if(g1(j,i,k+1) - g1(j,i,k) <= 1)
-%                     g1(j,i,k+1) = 0;
-%                 end
-%                 if(g2(j,i,k+1) - g2(j,i,k) <= 1)
-%                     g2(j,i,k+1) = 0;
-%                 end
-%                 if(g3(j,i,k+1) - g3(j,i,k) <= 1)
-%                     g3(j,i,k+1) = 0;
-%                 end
-%             end
-%         end
-%     end
 end
 figure();
 str1 = sprintf('camera1_1, decision threshold = %d',alpha(1));
@@ -75,41 +58,3 @@ for k=1:numFrames
     title(str3);
     pause(0.05)
 end
-
-
-%% 1-LAPI only movie
-% n = 1;
-% pai1 = zeros(sy,sx,numFrames);
-% pai2 = pai1;
-% pai3 = pai1;
-% for k=1:numFrames
-%     g1(:,:,k) = rgb2gray(vidFrames1_1(:,:,:,k));
-%     g2(:,:,k) = rgb2gray(vidFrames2_1(:,:,:,k));
-%     g3(:,:,k) = rgb2gray(vidFrames3_1(:,:,:,k));
-%     % 1-LAPI
-%     for j=(n+1):(sy-n) % scan x dimension first
-%         for i=(n+1):(sx-n) % calculate LAPI
-%             pai1(j,i,k) = (1/(2*n^2+2*n+1))*(g1(j,i-1,k) + g1(j-1,i,k) ...
-%                 + g1(j,i+1,k) + g1(j,i,k) + g1(j+1,i,k));
-%             pai2(j,i,k) = (1/(2*n^2+2*n+1))*(g2(j,i-1,k) + g2(j-1,i,k) ...
-%                 + g2(j,i+1,k) + g2(j,i,k) + g2(j+1,i,k));
-%             pai3(j,i,k) = (1/(2*n^2+2*n+1))*(g3(j,i-1,k) + g3(j-1,i,k) ...
-%                 + g3(j,i+1,k) + g3(j,i,k) + g3(j+1,i,k));
-%         end
-%     end
-% end
-% figure();
-% str1 = 'camera1_1, 1-LAPI only';
-% str2 = 'camera2_1, 1-LAPI only';
-% str3 = 'camera3_1, 1-LAPI only';
-% for k=1:numFrames
-%     subplot(3,1,1), imagesc(uint8(pai1(:,:,k))), drawnow
-%     title(str1);
-%     subplot(3,1,2), imagesc(uint8(pai2(:,:,k))), drawnow
-%     title(str2);
-%     subplot(3,1,3), imagesc(uint8(pai3(:,:,k))), drawnow
-%     title(str3);
-%     pause(0.05)
-% end
-% 
-% %% decision threshold + 1-LAPI movie
