@@ -1,6 +1,6 @@
 % Matt Russell
-% AMATH 582 hw3
-% dataset preprocessing script
+% AMATH 582 hw3_preproc.m
+% Script to perform preprocessing on data
 
 clear all; close all; clc;
 
@@ -38,14 +38,16 @@ s34 = size(vidFrames3_4);
 numFrames = min([s11(4) s12(4) s13(4) s14(4) s21(4) s22(4) s23(4) s24(4)...
     s31(4) s32(4) s33(4) s34(4)]);
 
-% dimensions are the same for all datasets
+% dimensions are the same for all datasets so the choice of sKN is
+% arbitrary
 sy = s11(1); 
 sx = s11(2);
 
 % Declare greyscale matrices and decision threshold on intensity
 alpha = [240 250 225];
 
-g11 = zeros(s11(1),s11(2),numFrames); % GS inside so use 3rd dim for frames
+% greyscale values inside so I use 3rd dim for frames
+g11 = zeros(s11(1),s11(2),numFrames); 
 g12 = zeros(s12(1),s12(2),numFrames);
 g13 = zeros(s13(1),s13(2),numFrames);
 g14 = zeros(s14(1),s14(2),numFrames);
@@ -75,7 +77,7 @@ for k=1:numFrames
     g33(:,:,k) = rgb2gray(vidFrames3_3(:,:,:,k));
     g34(:,:,k) = rgb2gray(vidFrames3_4(:,:,:,k));
     
-% pixel intensity decision threshold 
+% Pixel intensity decision threshold 
     for j=1:sy
         for i=1:sx
             if(g11(j,i,k) < alpha(1))
@@ -118,14 +120,6 @@ for k=1:numFrames
     end
 end
 
-% don't need these anymore
-clear vidFrames1_1 vidFrames1_2 vidFrames1_3 vidFrames1_4 ...
-vidFrames2_1 vidFrames2_2 vidFrames2_3 vidFrames2_4 ... 
-vidFrames3_1 vidFrames3_2 vidFrames3_3 vidFrames3_4 ...
-vidFrames4_1 vidFrames4_2 vidFrames4_3 vidFrames4_4
-
-clear s11 s12 s13 s14 s21 s22 s23 s24 s31 s32 s33 s34
-
 % Spatial decision threshold
 for k=1:numFrames
     for j=1:sy
@@ -152,14 +146,22 @@ for k=1:numFrames
     end 
 end
 
-%% Create measurement matrices X1 - X4, [ya;xa;yb;xb;yc;xc]
-X1 = zeros(6,numFrames); 
+% don't need these anymore
+clear vidFrames1_1 vidFrames1_2 vidFrames1_3 vidFrames1_4 ...
+vidFrames2_1 vidFrames2_2 vidFrames2_3 vidFrames2_4 ... 
+vidFrames3_1 vidFrames3_2 vidFrames3_3 vidFrames3_4 ...
+vidFrames4_1 vidFrames4_2 vidFrames4_3 vidFrames4_4
+
+% or these
+clear s11 s12 s13 s14 s21 s22 s23 s24 s31 s32 s33 s34
+
+%% Create measurement matrices X1 - X4: [ya;xa;yb;xb;yc;xc]
+% X is declared here as a row 'vector' so to avoid working with an
+% underdetermined system it will be transposed before the svd is taken
+X1 = zeros(6,numFrames); % 6 is the number of measurements we are taking
 X2 = X1;
 X3 = X1; 
 X4 = X1;
-
-
-% index = zeros(12,numFrames);
 
 % track the point and store the (y,x) [row col] in Xm
 for k=1:numFrames    
@@ -195,3 +197,7 @@ for k=1:numFrames
     [~, index] = max(g34(:,:,k),[],'all','linear');
     [X4(5,k), X4(6,k)] = ind2sub([sy sx],index);
 end
+
+% don't need these anymore
+clear g11 g12 g13 g14 g21 g22 g23 g24 g31 g32 g33 g34
+clear i j k index alpha
